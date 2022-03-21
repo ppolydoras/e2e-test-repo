@@ -1,0 +1,53 @@
+greek_stopwrds :=
+    select stopword from READ_CSV("s3://rawlabs-private-test-data/competition/pp/topic-modelling/greek_stopwrds.csv", cache := interval "0 seconds");
+
+items :=
+    select * from httpUrl IN READ_CSV("s3://rawlabs-private-test-data/competition/pp/topic-modelling/rss-feeds.csv", cache := interval "0 seconds"), 
+        CFIRST(
+            select a.channel.item 
+            from READ_XML[record( `@version`: double, channel: record( title: string, link: string nullable, description: string, item: collection( record( title: string, description: string, link: string, pubDate: string))))]
+            (httpUrl.url) as a
+        );
+
+http_content(mylink: string) := {
+    select aa.data from http(mylink) as aa
+}
+
+search_for(word: string not null, lang: string not null, cat: string not null) := {
+    select ISNULL(CFIRST(http_content(link)), "")
+    from items 
+    where description like "%"+word+"%"
+}
+
+get_links_for_word(word: string not null, lang: string not null, cat: string not null) := {
+    select link, description from items 
+    where description like "%"+word+"%"
+}
+
+wordfreq := \python(n: int, corpus: collection(string), stopwords: collection(string)): collection(string) -> $$$
+    from sklearn.feature_extraction.text import CountVectorizer
+    import unicodedata
+    from string import printable
+    
+    if len(corpus)==0:
+        return []
+    
+    def is_not_latin(text): 
+        return bool(set(text) - set(printable))
+
+    first_tuple_elements = []
+    vec = CountVectorizer(stop_words=stopwords).fit(corpus)
+    bag_of_words = vec.transform(corpus)
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items() if is_not_latin(word)]
+    words_freq = sorted(words_freq, key = lambda x: x[1], reverse=True)
+    first_tuple_elements = [a_tuple[0] for a_tuple in words_freq[:n]]
+    return first_tuple_elements
+$$$;
+
+find_topN_topics_for(term: string not null, topN: int) := {
+    select * from wordfreq(
+        topN, // Top 20 Topics
+        search_for(term,"",""), // Category search will be introduced in a latter version
+        greek_stopwrds) // skip greek stopwords
+}

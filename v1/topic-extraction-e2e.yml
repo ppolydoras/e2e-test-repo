@@ -1,0 +1,19 @@
+raw: 0.9
+endpoint: GET
+metadata:
+  title: Topic extraction
+  description: Find related topics for given subject
+  tags:
+    - topic
+    - extraction
+    - greek
+    - rss
+    - feed
+code: rql
+codeFile: topic-extraction.rql
+declaration: find_topN_topics_for
+format: json
+security:
+  public: true
+computeClass: normal
+enabled: true
