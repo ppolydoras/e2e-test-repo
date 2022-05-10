@@ -10,6 +10,6 @@ codeFile: code.rql
 declaration: countryGoldMedals
 format: json
 security:
-  public: true
+  public: private
 computeClass: normal
 enabled: true
