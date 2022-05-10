@@ -1,7 +1,7 @@
 # Description
 This utility generates a list of topics that relate to a given term, based on a search on a given list of greek news sites. The list can be found here:
 ```s3://rawlabs-public-test-data/competition/pp/topic-modelling/rss-feeds.csv```
-Feel free to add new RSS feeds, but this may cause instability.
+Feel free to add new RSS feeds, but this may cause instability..
 
 The search process is the following:
 1. Read all RSS feeds and filter out those with descriptions that do not contain the given search term
