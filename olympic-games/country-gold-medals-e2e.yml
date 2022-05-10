@@ -2,7 +2,7 @@ raw: 0.9
 endpoint: GET
 metadata:
   title: Country Olympic gold medal statistics
-  description: Get year, city, and the number of the gold medals of the country name specified
+  description: Get year, city and the number of the gold medals of the country name specified
   tags:
     - olympics
 code: rql
