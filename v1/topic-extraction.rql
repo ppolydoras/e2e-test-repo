@@ -1,5 +1,3 @@
-
-
 greek_stopwrds :=
     select stopword from READ_CSV("s3://rawlabs-private-test-data/competition/pp/topic-modelling/greek_stopwrds.csv", cache := interval "0 seconds");
 
