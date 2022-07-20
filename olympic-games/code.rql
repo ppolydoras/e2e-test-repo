@@ -1,3 +1,5 @@
+
+
 athletes :=
   READ_CSV("s3://rawlabs-private-test-data/summer_olympics.csv")
   UNION ALL
